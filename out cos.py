@@ -18,7 +18,7 @@ def k_perp(theta):
     return knu * theta
 
 def k_prime(theta, ior):
-    return knu * np.emath.sqrt((theta**2 + 2 * ior))
+    return knu * theta * np.emath.sqrt((1 + (2 * ior) / theta**2))
 
 
 def psi_incident(x, z, theta):
@@ -36,8 +36,19 @@ def integral_fxn_1(z):
        term1 = (np.absolute(psi_incident(0, z, theta) + psi_reflected(0, z, theta, -2.5E-8)))**2
        term2 = (np.absolute(psi_incident(0, z, theta) + psi_reflected(0, z, theta, 2.5E-8)))**2
        return term1 - term2
-    integral, *_ = quad(integrand, 0, 0.2, epsrel = 10E-10)
+    integral, *_ = quad(integrand, 0, 1, epsrel = 10E-10)
     return integral
+
+def integral_fxn_1_hardcode(z):
+    def integrand(theta):
+       term1 = (np.absolute(np.e**(com * knu * theta * z)/np.sqrt(2) + 1 / np.sqrt(2) * np.e**(-com * knu * theta * z) * (1 - np.sqrt(1 - 5E-8/theta**2))/(1 + np.sqrt(1 - 5E-8/theta**2))))**2
+       term2 = (np.absolute(np.e**(com * knu * theta * z)/np.sqrt(2) + 1 / np.sqrt(2) * np.e**(-com * knu * theta * z) * (1 - np.sqrt(1 + 5E-8/theta**2))/(1 + np.sqrt(1 + 5E-8/theta**2))))**2
+       return (term1 - term2)
+    integral, *_ = quad(integrand, 0, 1, epsrel = 10E-10)
+    return integral
+
+print("FIRST",integral_fxn_1_hardcode(0))
+print(integral_fxn_1(0))
 
 def integral_fxn_2(z):
     def integrand(theta):
@@ -52,10 +63,10 @@ def integral_fxn_2(z):
 
 def quantum_graph():
     # Generate z values from -3.33E-8 to 0
-    z_vals = np.linspace(-3E7, 0, 100)
+    z_vals = np.linspace(-3.33E-8, 0, 100)
 
     # Calculate y values using your function
-    integral_values = [integral_fxn_1(z) for z in z_vals]
+    integral_values = [integral_fxn_1_hardcode(z) for z in z_vals]
     axis_vals = 6 * z_vals / 3.3E-8
 
     # Create the plot
