@@ -1,14 +1,16 @@
-#import cnub.tools as tools
 import numpy as np
 
+Gf = 1.166E-23
 
 protons = int(input("Number of protons: "))
 mass_num = int(input("Mass number: "))
-num_density = float(input("Number density of atoms (1/m^3): "))
-#should be the right conversion to ev^3 -- check
-num_density_ev = num_density * 8E-21
+density = float(input("Density: (g/cm^3) "))
 
-Gf = 1.166E-23
+#get density as g/cm^3 because that's easily accessible and converts it to number density
+num_density = density / mass_num * (100)**3 * 6.022E23
+
+#convert to ev
+num_density_ev = num_density * 8E-21
 
 def ior_electron(Z, A, density, mass, k):
     U = Gf / (2 * np.sqrt(2)) * density * (-(3 * Z - A))
