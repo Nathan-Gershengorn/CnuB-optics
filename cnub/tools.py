@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.integrate import quad
+import vegas
 
 # Global variables (usually a bad thing)
 knu = 2.7e-4  # eV
@@ -65,51 +66,33 @@ def integral_fxn_1(z, delta_abs=2.5e-8):
         ) ** 2
         return term1 - term2
 
-    integral, *_ = quad(integrand, 0, 1)
-    return integral
+    integ = vegas.Integrator([[0,1]])
+    integral = integ(integrand, nitn=10, neval=1000)
+    return integral[0].mean
 
 
-def integral_fxn_1_hardcode(z, delta_abs=2.5e-8):
-    """integral_fxn_1_hardcode asymmetry
+def integral_fxn_1_separate(z, delta_abs=2.5e-8, ):
+    z = m_to_eVinv(z)  # Assuming m_to_eVinv is defined somewhere
 
-    Parameters
-    ----------
-    z : distance from the boundary in meters
-    delta_abs : |delta| absolute value of delta, by default 2.5e-8 (dimensionless)
-
-    Returns
-    -------
-    float
-        the integral value
-    """
-    z = m_to_eVinv(z)
-
-    def integrand(ctheta):
-        term1 = (
+    def term1(ctheta):
+        return (
             np.absolute(
-                np.exp(com * k_perp(ctheta) * z) / np.sqrt(2)
-                + 1
-                / np.sqrt(2)
-                * np.exp(-com * k_perp(ctheta) * z)
-                * (1 - np.sqrt(1 - 2 * delta_abs / ctheta**2))
-                / (1 + np.sqrt(1 - 2 * delta_abs / ctheta**2))
-            )
-        ) ** 2
-        term2 = (
-            np.absolute(
-                np.exp(com * k_perp(ctheta) * z) / np.sqrt(2)
-                + 1
-                / np.sqrt(2)
-                * np.exp(-com * k_perp(ctheta) * z)
-                * (1 - np.sqrt(1 + 2 * delta_abs / ctheta**2))
-                / (1 + np.sqrt(1 + 2 * delta_abs / ctheta**2))
+                psi_incident(0, z, ctheta) + psi_reflected(0, z, ctheta, -delta_abs)
             )
         ) ** 2
 
-        return term1 - term2
+    def term2(ctheta):
+        return (
+            np.absolute(
+                psi_incident(0, z, ctheta) + psi_reflected(0, z, ctheta, delta_abs)
+            )
+        ) ** 2
 
-    integral, *_ = quad(integrand, 0, 1, epsrel=10e-10)
-    return integral
+    integ1 = vegas.Integrator([[0,1]])
+    integ2 = vegas.Integrator([[0,1]])
+    integral1 = integ1(term1, nitn=10, neval=1000)
+    integral2 = integ2(term2, nitn=10, neval=1000)
+    return integral1[0].mean, integral2[0].mean
 
 
 def integral_fxn_2(z, delta_abs=2.5e-8):
@@ -128,3 +111,5 @@ def analytical_approximation(z):
     delta = 2.5e-8
     lambda_cr = 3.3  # 1.87e-8)
     return (2 / 15) * np.sqrt(2 * abs(delta)) * (3 + 5 * np.exp(-np.abs(z) / lambda_cr))
+
+
