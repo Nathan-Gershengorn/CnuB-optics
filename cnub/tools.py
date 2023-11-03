@@ -17,6 +17,9 @@ def m_to_eVinv(d):
 
 
 # quantum section
+def gamma(ctheta, delta):
+    return (-1 - (ctheta**2 - np.emath.sqrt(ctheta**4 + 2 * delta * ctheta**2)/delta))
+
 def k_par(ctheta):
     return knu * np.sqrt(1 - ctheta**2)
 
@@ -71,8 +74,8 @@ def integral_fxn_1(z, delta_abs=2.5e-8):
     return integral[0].mean
 
 
-def integral_fxn_1_separate(z, delta_abs=2.5e-8, ):
-    z = m_to_eVinv(z)  # Assuming m_to_eVinv is defined somewhere
+def integral_fxn_1_separate(z, delta_abs=2.5e-8):
+    z = m_to_eVinv(z)
 
     def term1(ctheta):
         return (
@@ -93,6 +96,29 @@ def integral_fxn_1_separate(z, delta_abs=2.5e-8, ):
     integral1 = integ1(term1, nitn=10, neval=1000)
     integral2 = integ2(term2, nitn=10, neval=1000)
     return integral1[0].mean, integral2[0].mean
+
+def integral_vac_gamma(z, delta_abs = 2.5E-8):
+    z = m_to_eVinv(z)
+
+    def integrand(ctheta):
+        return 0.5 * (
+            2 * np.real(
+                np.conjugate(gamma(ctheta, -delta_abs) * np.exp(-2 * com * knu * ctheta * z))
+            ) + 
+            
+            np.absolute(
+                gamma(ctheta, -delta_abs) * np.exp(-2 * com * knu * ctheta * z)
+            )**2 - 
+
+            #This commented stuff is a GPT idea, but it seems also wrong
+            #((1 + gamma(ctheta, delta_abs) * np.cos(2*knu*ctheta*z))**2 + (gamma(ctheta, delta_abs) * np.sin(2*knu*ctheta*z))**2)
+            2 * gamma(ctheta, delta_abs) * np.cos(2 * knu * ctheta * z) - gamma(ctheta, delta_abs)**2
+        )
+    integ = vegas.Integrator([[0,1]])
+    integral = integ(integrand, nitn=10, neval=1000)
+    return integral[0].mean
+
+
 
 
 def integral_fxn_2(z, delta_abs=2.5e-8):
