@@ -16,6 +16,12 @@ def m_to_eVinv(d):
     return cm_to_eVinv(d * 1e2)
 
 
+def log_jacobian(ctheta):
+    J = [[-np.sqrt(1-ctheta**2), 0], 
+         [1/ctheta, 1/ctheta]]
+    return np.absolute(J[0][0]*J[1][1] - J[0][1]*J[1][0])
+
+
 # quantum section
 def gamma(ctheta, delta):
     return (-1 - (ctheta**2 - np.emath.sqrt(ctheta**4 + 2 * delta * ctheta**2)/delta))
@@ -72,6 +78,28 @@ def integral_fxn_1(z, delta_abs=2.5e-8):
     integ = vegas.Integrator([[0,1]])
     integral = integ(integrand, nitn=10, neval=1000)
     return integral[0].mean
+
+
+def integral_fxn_1_log(z, delta_abs = 2.5E-8):
+    z = m_to_eVinv(z)
+
+    def integrand(ctheta):
+        term1 = (
+            np.absolute(
+                psi_incident(0, z, ctheta) + psi_reflected(0, z, ctheta, -delta_abs)
+            )
+        ) ** 2
+        term2 = (
+            np.absolute(
+                psi_incident(0, z, ctheta) + psi_reflected(0, z, ctheta, delta_abs)
+            )
+        ) ** 2
+        return (term1 - term2)*log_jacobian(ctheta)
+    
+    integ = vegas.Integrator([[-20,1]])
+    integral = integ(integrand, nitn=10, neval=1000)
+    return integral[0].mean
+
 
 
 def integral_fxn_1_separate(z, delta_abs=2.5e-8):
