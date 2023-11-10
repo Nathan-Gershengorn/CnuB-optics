@@ -24,7 +24,7 @@ def log_jacobian(ctheta):
 
 # quantum section
 def gamma(ctheta, delta):
-    return (-1 - (ctheta**2 - np.emath.sqrt(ctheta**4 + 2 * delta * ctheta**2)/delta))
+    return (-1 - (ctheta**2 - np.emath.sqrt(ctheta**4 + 2 * delta * ctheta**2))/delta)
 
 def k_par(ctheta):
     return knu * np.sqrt(1 - ctheta**2)
@@ -130,7 +130,7 @@ def integral_vac_gamma(z, delta_abs = 2.5E-8):
 
     def integrand(ctheta):
         return 0.5 * (
-            2 * np.real(np.conjugate(gamma(ctheta, -delta_abs)) * np.exp(2j * knu * ctheta * z)
+            2 * np.real(np.conjugate(gamma(ctheta, -delta_abs) * np.exp(-2j * knu * ctheta * z))
             ) + 
             
             np.absolute(
@@ -141,7 +141,7 @@ def integral_vac_gamma(z, delta_abs = 2.5E-8):
             
             - gamma(ctheta, delta_abs)**2
         )
-    integ = vegas.Integrator([[0,2.3E-4]])
+    integ = vegas.Integrator([[1,0]])
     integral = integ(integrand, nitn=10, neval=1000)
     return integral[0].mean
 
