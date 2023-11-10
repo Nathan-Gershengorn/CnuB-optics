@@ -80,7 +80,7 @@ def integral_fxn_1(z, delta_abs=2.5e-8):
     return integral[0].mean
 
 
-def integral_fxn_1_log(z, delta_abs = 2.5E-8):
+def integral_fxn_1_log(z, delta_abs = 2.5E-8): #try doing this with gamma after checking it
     z = m_to_eVinv(z)
 
     def integrand(ctheta):
