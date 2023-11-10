@@ -130,19 +130,18 @@ def integral_vac_gamma(z, delta_abs = 2.5E-8):
 
     def integrand(ctheta):
         return 0.5 * (
-            2 * np.real(
-                np.conjugate(gamma(ctheta, -delta_abs) * np.exp(-2 * com * knu * ctheta * z))
+            2 * np.real(np.conjugate(gamma(ctheta, -delta_abs)) * np.exp(2j * knu * ctheta * z)
             ) + 
             
             np.absolute(
-                gamma(ctheta, -delta_abs) * np.exp(-2 * com * knu * ctheta * z)
+                gamma(ctheta, -delta_abs) * np.exp(-2 * 1j * knu * ctheta * z)
             )**2 - 
 
-            #This commented stuff is a GPT idea, but it seems also wrong
-            #((1 + gamma(ctheta, delta_abs) * np.cos(2*knu*ctheta*z))**2 + (gamma(ctheta, delta_abs) * np.sin(2*knu*ctheta*z))**2)
-            2 * gamma(ctheta, delta_abs) * np.cos(2 * knu * ctheta * z) - gamma(ctheta, delta_abs)**2
+            2 * gamma(ctheta, delta_abs) * np.cos(2 * knu * ctheta * z)
+            
+            - gamma(ctheta, delta_abs)**2
         )
-    integ = vegas.Integrator([[0,1]])
+    integ = vegas.Integrator([[0,2.3E-4]])
     integral = integ(integrand, nitn=10, neval=1000)
     return integral[0].mean
 
