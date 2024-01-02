@@ -23,6 +23,14 @@ def normalize(psi):
     psi_norm = psi / norm[:, np.newaxis]  # Normalize each row
     return psi_norm
 
+# Analytical solution
+def normalize_analytical(n, x, N):
+    psi = np.sqrt(2) * np.sin(n*np.pi*x*N) # times N to make it work on the same domain
+    dx = x[1] - x[0]  # calculate the step size
+    norm = np.sqrt(np.sum(np.abs(psi)**2) * dx)  # multiply the sum by the step size
+    psi_norm_ana = psi / norm
+    return psi_norm_ana
+
 # Solve the Schrödinger equation for each dimension
 E_x, psi_x = np.linalg.eigh(Hamiltonian(1,N))
 E_y, psi_y = np.linalg.eigh(Hamiltonian(1,N))
@@ -32,18 +40,34 @@ psi_x_norm = normalize(psi_x)
 psi_y_norm = normalize(psi_y)
 
 # Create a 2D grid for the x, y coordinates
-x = np.linspace(0, 1, N)
-y = np.linspace(0, 1, N)
+x = np.linspace(0, N, 100)
+y = np.linspace(0, N, 100)
 X, Y = np.meshgrid(x, y)
 
 # Calculate the 2D wave function for the nth energy level
 n = 2  # Change this to plot a different energy level
-psi_2D = psi_x_norm[n-1, :, np.newaxis] * psi_y_norm[n-1, np.newaxis, :]
+psi_2D_num = psi_x_norm[n-1, :, np.newaxis] * psi_y_norm[n-1, np.newaxis, :]
 
-# Plot the 2D wave function
-plt.imshow(psi_2D, extent=[0, 1, 0, 1], origin='lower')
-plt.colorbar(label='Wave function')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.title(f'2D wave function for n = {n}')
+# Calculate the 2D analytical wave function
+psi_x_ana = normalize_analytical(n, x, N)
+psi_y_ana = normalize_analytical(n, y, N)
+psi_2D_ana = psi_x_ana[:, np.newaxis] * psi_y_ana[np.newaxis, :]
+
+# Plot the 2D wave functions
+fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+
+im1 = axs[0].imshow(psi_2D_num, extent=[0, 1, 0, 1], origin='lower')
+axs[0].set_title(f'Numerical 2D wave function for n = {n}')
+
+im2 = axs[1].imshow(psi_2D_ana, extent=[0, 1, 0, 1], origin='lower')
+axs[1].set_title(f'Analytical 2D wave function for n = {n}')
+
+for ax in axs:
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+
+fig.colorbar(im1, ax=axs[0], label='Wave function')
+fig.colorbar(im2, ax=axs[1], label='Wave function')
+
+plt.tight_layout()
 plt.show()

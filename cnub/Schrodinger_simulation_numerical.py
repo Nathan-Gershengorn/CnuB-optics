@@ -30,10 +30,23 @@ def normalize(psi):
 psi_norm = normalize(psi)
 
 # function to graph the nth harmonic
-def harmonic(n):
+def harmonic(n, N):
     for i, points_array in enumerate(psi_norm[n-1:n]):
-        plt.plot(points_array, label=f'Harmonic {n}')
+        plt.plot(points_array, label=f'Numerical: n = {n}')
     
+    x = np.linspace(0, N, 100) # x ranges from 0 to 1000
+
+    def normalize_analytical(n, x):
+        psi = np.sqrt(2) * np.sin(n*np.pi*x*N) # times N to make it work on the same domain
+        dx = x[1] - x[0]  # calculate the step size
+        norm = np.sqrt(np.sum(np.abs(psi)**2) * dx)  # multiply the sum by the step size
+        psi_norm_ana = psi / norm
+        return psi_norm_ana
+    
+    for a in range(n, n+1):
+        psi_norm_ana = normalize_analytical(a, x)
+        plt.plot(x, psi_norm_ana, label=f'Analytical: n = {a}')
+
     # Set labels and title
     plt.xlabel('X-axis')
     plt.ylabel('Y-axis')
@@ -45,4 +58,5 @@ def harmonic(n):
     # Show the plot
     plt.show()
 
-harmonic(3)
+
+harmonic(3, N)
