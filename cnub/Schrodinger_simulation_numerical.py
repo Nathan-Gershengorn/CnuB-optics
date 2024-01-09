@@ -59,4 +59,4 @@ def harmonic(n, N):
     plt.show()
 
 
-harmonic(3, N)
+harmonic(2, N)

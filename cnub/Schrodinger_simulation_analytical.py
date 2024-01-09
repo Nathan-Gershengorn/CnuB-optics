@@ -11,7 +11,6 @@ def normalize_analytical(n, x, N):
     dx = x[1] - x[0]  # calculate the step size
     norm = np.sqrt(np.sum(np.abs(psi)**2) * dx)  # multiply the sum by the step size
     psi_norm_ana = psi / norm
-    print(np.sum(np.abs(psi_norm_ana)**2) * dx)  # should be close to 1
     return psi_norm_ana
 
 # Plot harmonics
