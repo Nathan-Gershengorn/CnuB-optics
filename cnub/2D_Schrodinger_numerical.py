@@ -45,7 +45,7 @@ y = np.linspace(0, N, 100)
 X, Y = np.meshgrid(x, y)
 
 # Calculate the 2D wave function for the nth energy level
-n = 2  # Change this to plot a different energy level
+n = 3  # Change this to plot a different energy level
 psi_2D_num = psi_x_norm[n-1, :, np.newaxis] * psi_y_norm[n-1, np.newaxis, :]
 
 

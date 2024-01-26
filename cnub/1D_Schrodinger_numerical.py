@@ -32,7 +32,7 @@ psi_norm = normalize(psi)
 # function to graph the nth harmonic
 def harmonic(n, N):
     for i, points_array in enumerate(psi_norm[n-1:n]):
-        plt.plot(points_array, label=f'Numerical: n = {n}')
+        plt.plot(points_array**2, label=f'Numerical: n = {n}')
     
     x = np.linspace(0, N, 100) # x ranges from 0 to 1000
 
@@ -45,18 +45,19 @@ def harmonic(n, N):
     
     for a in range(n, n+1):
         psi_norm_ana = normalize_analytical(a, x)
-        plt.plot(x, psi_norm_ana, label=f'Analytical: n = {a}')
+        plt.plot(x, psi_norm_ana**2, label=f'Analytical: n = {a}', ls=':', color='black')
 
     # Set labels and title
     plt.xlabel('X-axis')
     plt.ylabel('Y-axis')
-    plt.title(f'Harmonic {n}')
+    plt.title(f'Harmonic {n} Probability Distribution')
 
     # Display legend
     plt.legend()
 
     # Show the plot
+    plt.savefig('plots/Schrodinger_1D_Simulation.png')
     plt.show()
 
 
-harmonic(2, N)
+harmonic(4, N)
