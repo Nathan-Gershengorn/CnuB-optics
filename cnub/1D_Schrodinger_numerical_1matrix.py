@@ -25,14 +25,14 @@ def Hamiltonians(m, N): # make an all diag(2) off-diag(-1) matrix
         H = np.zeros((N,N))
         for i in range(0, H.shape[0]):
             if i < int(N/4) or i > int(3*N/4):
-                H[i,i] = 10e10
+                H[i,i] = 100
             else:
                 H[i,i] = 0
-    
+
         return H
-    print(kinetic(N) + potential(N)* -hbar**2 / (2*m)) 
-    H = kinetic(N) + potential(N)
-    return H * -hbar**2 / (2*m)
+    H = (kinetic(N)* (-hbar**2 / (2*m))  + potential(N))
+    print(H)
+    return H
 
 
 def normalize(psi):
@@ -46,10 +46,10 @@ def normalize(psi):
 def harmonic(n, N):
     
     E, psi = np.linalg.eigh(Hamiltonians(1, N))
-    psi_norm = normalize(psi)
+    psi = psi.T
     x_values = np.linspace(0, N, N)
     
-    plt.plot(x_values, psi_norm[n-1]**2, label=f'Numerical: n = {n}') # graphing numerically
+    plt.plot(x_values, psi[n-1]**2, label=f'Numerical: n = {n}') # graphing numerically
 
 
     x1 = np.linspace(0, N/4, int(N/4)) 
@@ -59,7 +59,7 @@ def harmonic(n, N):
 
 
     def normalize_analytical_in(n, x):
-        psi = np.sqrt(2) * np.sin(n*np.pi*x*N/2) # times N to make it work on the same domain
+        psi = np.sqrt(2)*np.sin(n*np.pi*x*N/2) # times N to make it work on the same domain
         dx = x[1] - x[0]  # calculate the step size
         norm = np.sqrt(np.sum(np.abs(psi)**2) * dx)  # multiply the sum by the step size
         psi_norm_ana = psi / norm
