@@ -25,7 +25,7 @@ def Hamiltonians(m, N): # make an all diag(2) off-diag(-1) matrix
         H = np.zeros((N,N))
         for i in range(0, H.shape[0]):
             if i < int(N/4) or i > int(3*N/4):
-                H[i,i] = 100
+                H[i,i] = .1
             else:
                 H[i,i] = 0
 
@@ -50,6 +50,8 @@ def harmonic(n, N):
     x_values = np.linspace(0, N, N)
     
     plt.plot(x_values, psi[n-1]**2, label=f'Numerical: n = {n}') # graphing numerically
+    plt.vlines(250, 0, .004)
+    plt.vlines(750, 0, .004)
 
 
     x1 = np.linspace(0, N/4, int(N/4)) 
@@ -89,4 +91,9 @@ def harmonic(n, N):
     plt.show()
 
 
-harmonic(3, N)
+harmonic(1, N)
+
+# find the decay constant for outside the box
+# mess around more, understand it better
+# expand to 2D or 3D or soemthing? idk just fuck around
+# try 1/r case
