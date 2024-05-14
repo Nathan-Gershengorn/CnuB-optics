@@ -95,7 +95,6 @@ def harmonic(n, N):
     plt.legend()
     plt.ylim(top=.05)
     # Show the plot
-    plt.savefig('plots/Schrodinger_1D_Simulation.png')
     
     plt.show()
 
