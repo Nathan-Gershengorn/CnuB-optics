@@ -15,8 +15,8 @@ def cm_to_eVinv(d):
 def m_to_eVinv(d):
     return cm_to_eVinv(d * 1e2)
 
-print(m_to_eVinv(1e6))
-print(cm_to_eVinv(1e8))
+print(m_to_eVinv(6.3E6))
+
 
 
 def log_jacobian(ctheta):
