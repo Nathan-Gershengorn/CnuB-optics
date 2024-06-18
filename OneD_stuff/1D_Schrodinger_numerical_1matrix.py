@@ -18,7 +18,7 @@ def Hamiltonians(m, N): # make an all diag(2) off-diag(-1) matrix
                 H[i,i-1] = -1
             if i != H.shape[0]-1:
                 H[i,i+1] = -1
-        
+        print(H)
         return H
 
     def potential(N):
@@ -31,7 +31,6 @@ def Hamiltonians(m, N): # make an all diag(2) off-diag(-1) matrix
 
         return H
     H = (kinetic(N)* (-hbar**2 / (2*m))  + potential(N))
-    print(H)
     return H
 
 
@@ -88,7 +87,7 @@ def harmonic(n, N):
     plt.show()
 
 
-harmonic(3, N)
+harmonic(1, N)
 
 # find the decay constant for outside the box
 # mess around more, understand it better
