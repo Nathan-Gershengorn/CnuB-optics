@@ -11,7 +11,7 @@ k = 30000
 delta = 1e-2
 num = 10000
 width = 0.02
-num_pts = 10
+num_pts = 500
 
 k_minus = k * np.sqrt(1 - 2 * delta)
 k_plus = k * np.sqrt(1 + 2 * delta)
@@ -60,25 +60,26 @@ in_plus = lambda r: np.sum(in_plus_terms(r)) / (4 * np.pi)
 out_minus = lambda r: np.sum(out_minus_terms(r)) / (4 * np.pi)
 out_plus = lambda r: np.sum(out_plus_terms(r)) / (4 * np.pi)
 
-plt.loglog(l_list, in_plus_terms(100), label='psi^2')
-plt.legend()
+
+
+
+def asym(r):
+    if r <= 1:
+        asym = in_minus(r) - in_plus(r)
+    else:
+        asym = out_minus(r) - out_plus(r)
+    return asym
+
+xcoor = np.linspace(1 - width, 1 + width, num_pts)
+
+ycoor = []
+tracker = 0
+for x in xcoor:
+    ycoor.append(asym(x))
+    print(num_pts - tracker, "points left")
+    tracker += 1
+
+plt.plot(xcoor, -ycoor)
 plt.show()
 
-
-
-# def asym(r):
-#     if r <= 1:
-#         asym = in_minus(r) - in_plus(r)
-#     else:
-#         asym = out_minus(r) - out_plus(r)
-#     return asym
-
-# xcoor = np.linspace(1 - width, 1 + width, num_pts)
-
-# # ycoor = []
-# # for x in xcoor:
-# #     ycoor.append(asym(x))
-# #     print("kdsjbfal")
-
-
-# np.savetxt(f'k{k}_delta{delta}.txt', np.vstack((xcoor, ycoor)).T)
+np.savetxt(f'k{k}_delta{delta}.txt', np.vstack((xcoor, ycoor)).T)

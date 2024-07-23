@@ -12,8 +12,8 @@ m_H = 5e5 #ev
 R_H = 2.68E-4 #1/ev
 
 m = .1
-R = 3e2
-U = .01
+R = 1
+U = 90000000
 distance = (R)*7
 earth_cutoff = R / distance
 e = .303 #unitless
